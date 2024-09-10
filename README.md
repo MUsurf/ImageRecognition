@@ -13,5 +13,12 @@ Repository to hold code working on image recognition tasks
   - `maskBent.png` is a quick example of bent oblong
 - `cameraCheck.py` script to ensure pygame can access camera
 
+## Todo
+- [ ] Separate Detection into its own class
+- [ ] Support Contour Detection for bent sticks [Docs](https://docs.opencv.org/3.4/dd/d49/tutorial_py_contour_features.html)
+- [ ] Thorough Documentation
+- [ ] Ensure Compatibility with Sub Controls
+- [ ] StandArdiZe capitalIZATIOn
+
 ## Docs
 - [Miniconda](./docs/Miniconda.md)
