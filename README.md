@@ -12,6 +12,9 @@ Repository to hold code working on image recognition tasks
   - `mask.png` is a quick example of continuous oblong
   - `maskBent.png` is a quick example of bent oblong
 - `cameraCheck.py` script to ensure pygame can access camera
+- `README.md` this file
+- `requirements-conda.txt` conda environment installed with `conda create --name opencv3.12 --file requirements-conda.txt` 
+- `requirements.txt` python pip packages to install with `pip install -r requirements.txt`
 
 ## Todo
 - [ ] Separate Detection into its own class

@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 if __debug__:
-    from classes.compass import *
+    from orange_oblong_detection.classes.compass import *
 
 camera_index = 0
 cap = cv.VideoCapture(camera_index)
