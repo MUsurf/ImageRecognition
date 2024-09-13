@@ -1,4 +1,10 @@
 # Miniconda Overview
+## TL;DR SURF Setup
+- `conda init` (If first use of Conda)
+- `conda create --name myenvname python=3.12`
+- `conda activate myenvname`
+- `pip install -r requirements.txt`
+- `conda deactivate` (When done with venv)
 ## What is Miniconda? [^1]
 - A minimal "Anaconda" Python distro, the necessary components to run Python and manage packages
 	- CLI tool to simplify installation and management of software dependencies

@@ -25,3 +25,10 @@ Repository to hold code working on image recognition tasks
 
 ## Docs
 - [Miniconda](./docs/Miniconda.md)
+- 
+### TL;DR SURF Setup
+- `conda init` (If first use of Conda)
+- `conda create --name myenvname python=3.12`
+- `conda activate myenvname`
+- `pip install -r requirements.txt`
+- `conda deactivate` (When done with venv)
