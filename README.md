@@ -32,3 +32,5 @@ Repository to hold code working on image recognition tasks
 - `conda activate myenvname`
 - `pip install -r requirements.txt`
 - `conda deactivate` (When done with venv)
+
+Allison Clauser
