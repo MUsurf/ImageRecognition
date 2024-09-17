@@ -15,18 +15,22 @@ if not cap.isOpened():
     print(f"Error: Camera with index {camera_index} not accessible or not found")
     exit()
 
-## Draw a line around the orange thing
 
-while True:
+#Creates a frame for the image and flips it
+def createFrame():
     # Get the frame to read. with ret being a flag to indicate success
     ret, frame = cap.read()
     if not ret:
         print("Error: Failed to capture frame")
-        break
+        raise ValueError("Error: Failed to capture frame")
+        
 
     # Flips the frame to make it more user viewable
     frame = cv.flip(frame, 1)
+    return frame
 
+#creates a mask for the frame that had previously been created by createFrame
+def createMask(frame):
     # Converts the frame to HSV color range
     hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
@@ -36,6 +40,24 @@ while True:
 
     # Creates a "mask" for the frame that is in the color range for orange
     mask = cv.inRange(hsv, lower_color, upper_color)
+    return mask
+
+
+
+
+
+## Draw a line around the orange thing
+
+while True:
+   
+   #makes a frame and flips it
+    try: 
+        frame = createFrame()
+    except ValueError as e:
+        break
+
+    #create a mask for the frame
+    mask = createMask(frame)
 
     # Creates an array of 15x15 of np.uint8 of all ones 
     kernel = np.ones((15, 15), np.uint8)
