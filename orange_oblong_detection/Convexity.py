@@ -1,7 +1,10 @@
 import cv2 as cv
 import numpy as np
-
+import math
 camera_index = 0
+
+
+
 # Initialize Video Capture
 cap = cv.VideoCapture(camera_index)
 
@@ -57,22 +60,61 @@ while True:
         largest_contour = max(contours, key=cv.contourArea)
         
         
+        
         try:
             hull = cv.convexHull(largest_contour,returnPoints = False)
             defects = cv.convexityDefects(largest_contour,hull)
-            if(defects is not None):           
+            
+            maxF = 0
+            maxE = 0
+            maxD = 0
+            maxS = 0
+            
+            if(defects is not None):
                 for i in range(defects.shape[0]):
                     s,e,f,d = defects[i,0]
-                    start = tuple(largest_contour[s][0])
-                    end = tuple(largest_contour[e][0])
-                    far = tuple(largest_contour[f][0])
-                    cv.line(frame,start,end,[0,255,0],2)
-                    cv.circle(frame,far,5,[0,0,255],-1)
+                    
+                    if(d > maxD):
+                        far = tuple(largest_contour[f][0])
+                        maxS = s
+                        maxE = e
+                        maxD = d
+                        maxF = f
+                
+                
+                    
+                start = tuple(largest_contour[maxS][0])
+                end = tuple(largest_contour[maxE][0])
+                far = tuple(largest_contour[maxF][0])
+                
+                
+                # find length of all sides of triangle
+                a = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
+                b = math.sqrt((far[0] - start[0])**2 + (far[1] - start[1])**2)
+                c = math.sqrt((end[0] - far[0])**2 + (end[1] - far[1])**2)
+                s = (a+b+c)/2
+                ar = math.sqrt(s*(s-a)*(s-b)*(s-c))
+                
+                
+                # apply cosine rule here
+                angle = math.acos((b**2 + c**2 - a**2)/(2*b*c)) * 57
+            
+                cv.line(frame,start,far,[0,255,0],2)
+                cv.line(frame,far,end,[0,255,0],2)
+                
+                
+
+                cv.circle(frame,far,5,[0,0,255],-1)
+                
+                    
+                    
+                
         except cv.error:
             continue
             
         
     cv.imshow('img',frame)
+    cv.imshow('mask',mask_smoothed)
     
 
     if cv.waitKey(1) & 0xFF == ord('q'):
