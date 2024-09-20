@@ -3,40 +3,8 @@ import numpy as np
 import math
 camera_index = 0
 
-# ChatGPT combine overlay mask on frame function
-def blend_frame_with_mask(frame, mask, darkening_factor=0.5):
-    """
-    Blend the original frame with a mask, where the masked regions remain bright
-    and the areas outside the mask are darkened but still viewable.
-    
-    :param frame: The original camera input frame (BGR).
-    :param mask: A binary mask where the masked region should stay bright.
-    :param darkening_factor: The factor to darken the parts outside the mask (0 to 1).
-    :return: The combined frame with darkened areas outside the mask.
-    """
-    # Ensure mask is single channel
-    if len(mask.shape) > 2:
-        mask = cv.cvtColor(mask, cv.COLOR_BGR2GRAY)
-    
-    # Convert the mask to 3 channels to apply to the frame
-    mask_3channel = cv.cvtColor(mask, cv.COLOR_GRAY2BGR)
-
-    # Darken the original frame by multiplying by the darkening factor
-    darkened_frame = (frame * darkening_factor).astype(np.uint8)
-
-    # Inverse the mask to darken the areas outside the color mask
-    mask_inv = cv.bitwise_not(mask)
-
-    # Apply the inverted mask to the darkened frame to darken non-mask areas
-    darkened_areas = cv.bitwise_and(darkened_frame, darkened_frame, mask=mask_inv)
-
-    # Apply the mask to keep the bright areas
-    bright_areas = cv.bitwise_and(frame, frame, mask=mask)
-
-    # Combine bright areas and darkened areas into one frame
-    combined_frame = cv.add(bright_areas, darkened_areas)
-
-    return combined_frame
+if __debug__:
+    from classes.helper import *
 
 # Initialize Video Capture
 cap = cv.VideoCapture(camera_index)
@@ -145,11 +113,12 @@ while True:
         except cv.error:
             continue
             
-    combined = blend_frame_with_mask(frame, mask_smoothed)
-
-    cv.imshow('img',frame)
-    cv.imshow('mask',mask_smoothed)
-    cv.imshow('combined',combined)
+    cv.imshow('img', frame)
+    cv.imshow('mask', mask_smoothed)
+    
+    if __debug__:
+        combined = blend_frame_with_mask(frame, mask_smoothed)
+        cv.imshow('combined', combined)
     
 
     if cv.waitKey(1) & 0xFF == ord('q'):
