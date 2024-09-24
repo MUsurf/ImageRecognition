@@ -4,7 +4,7 @@ import math
 camera_index = 0
 
 # If running in test environment then import helper
-if __debug__:
+if __debug__ and __name__ == "__main__":
     from classes.helper import *
 
 # Initialize Video Capture
@@ -101,7 +101,6 @@ while True:
                 s = (a+b+c)/2
                 ar = math.sqrt(s*(s-a)*(s-b)*(s-c))
                 
-                
                 # apply cosine rule here
                 angle = math.acos((b**2 + c**2 - a**2)/(2*b*c)) * 57
             
@@ -110,6 +109,8 @@ while True:
                 cv.line(frame,far,end,[0,255,0],2)
                 # Draw the point of the angle
                 cv.circle(frame,far,5,[0,0,255],-1)
+                # Write angle
+                cv.putText(frame, str(math.floor(angle)), far, cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv.LINE_AA)
         # If error from opencv then skip this frame
         except cv.error:
             continue

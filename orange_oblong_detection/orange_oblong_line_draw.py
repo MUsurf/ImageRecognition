@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 # If running while testing, import the compass
-if __debug__:
+if __debug__ and __name__ == "__main__":
     from classes.compass import *
 
 # Which camera on the device to use
@@ -42,20 +42,7 @@ def createMask(frame):
     mask = cv.inRange(hsv, lower_color, upper_color)
     return mask
 
-
-
-
-
-## Draw a line around the orange thing
-
-while True:
-   
-   #makes a frame and flips it
-    try: 
-        frame = createFrame()
-    except ValueError as e:
-        break
-
+def findLine(frame):
     #create a mask for the frame
     mask = createMask(frame)
 
@@ -108,10 +95,10 @@ while True:
         # Derive slope from classic rise over run
         m = vy / vx
         # Clamp the slope to avoid extreme values causing seeming overflow issues
-        m = min(max(m, -25), 25)
+        m = min(max(m, -500), 500)
 
         # If running while testing, display the compass with the found angle
-        if __debug__:
+        if __debug__ and __name__ == "__main__":
             angle = calculate_angle(vx, vy)
             draw_compass(angle)
 
@@ -120,23 +107,36 @@ while True:
         righty = int(((cols - x) * m) + y)
 
         # Clamp these values to the edges of the camera
-        lefty = max(min(lefty, camera_width), -camera_width)
-        righty = max(min(righty, camera_width), -camera_width)
+        lefty = max(min(lefty, (100 * cols)), -(100 * cols))
+        righty = max(min(righty, (100 * cols)), -(100 * cols))
 
         # Find where the line lines up on the y axis, top or bottom
-        colMin1 = cols - 1 if cols - 1 else 0 #* How does this actually work?
+        # colMin1 = cols - 1 if cols - 1 else 0 #* How does this actually work?
 
         # Draw the best fit line on the frame in green (BGR)
-        cv.line(frame, (colMin1, righty), (0, lefty), (0, 255, 0), 2)
+        cv.line(frame, (cols - 1, righty), (0, lefty), (0, 0, 0), 2)
 
     # Show the displays
     cv.imshow('Contours', frame)
     cv.imshow('Mask', mask)
     cv.imshow('Smoothed', mask_smoothed)
 
-    # Wait for a q to quit the program
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        break
+
+
+## Draw a line around the orange thing
+if __name__ == "__main__":
+    while True:
+    #makes a frame and flips it
+        try: 
+            frame = createFrame()
+        except ValueError as e:
+            break
+
+        findLine(frame)
+
+        # Wait for a q to quit the program
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
 
 # Close the windows and release the camera
 cv.destroyAllWindows()
