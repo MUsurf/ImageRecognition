@@ -2,6 +2,7 @@ import pygame
 import cv2
 import numpy as np
 import math
+import random
 
 import sys
 sys.path.append('./orange_oblong_detection')
@@ -16,11 +17,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # Define camera properties
 camera_pos = [0, 0, 5]  # Start the camera a little away from the blob
-camera_rotation = 0       # Rotation in degrees
+camera_rotation = 0                                                                # Rotation in degrees
 
 # Define the orange blob (ellipse)
 orange_color = (255, 165, 0)
-blob_width, blob_height = 100, 50
+blob_width, blob_height = 50, 100
 
 # Blob's initial position in world space (not relative to camera)
 blob_pos = [0, 0]
@@ -31,6 +32,11 @@ rotate_speed = 0.5
 
 # Pygame clock for controlling the frame rate
 clock = pygame.time.Clock()
+
+def set_pos(position, rotation):
+    global camera_pos, camera_rotation
+    camera_pos = position
+    camera_rotation = rotation
 
 def render_scene():
     # Clear screen with blue background
@@ -72,8 +78,8 @@ def move_camera(forward=0, right=0, dz=0):
     angle_rad = math.radians(camera_rotation)
 
     # Move forward/backward in the direction the camera is facing
-    camera_pos[0] += forward * math.sin(angle_rad) * move_speed
-    camera_pos[1] += forward * math.cos(angle_rad) * move_speed
+    camera_pos[0] += -forward * math.sin(angle_rad) * move_speed
+    camera_pos[1] += -forward * math.cos(angle_rad) * move_speed
 
     # Move left/right relative to the camera's current facing direction
     camera_pos[0] += right * math.cos(angle_rad) * move_speed
@@ -81,6 +87,7 @@ def move_camera(forward=0, right=0, dz=0):
 
     # Adjust the camera's height (z-axis)
     camera_pos[2] += dz
+    camera_pos[2] = max(camera_pos[2], 0.1)
 
     # Prevent the camera from getting too close (or going backward to a negative distance)
     # if camera_pos[2] < config['camera']['max_distance']:
@@ -92,8 +99,8 @@ def rotate_camera(degrees=0):
     camera_rotation += degrees
     camera_rotation %= 360  # Keep the rotation angle within 0-360 degrees
 
-def move_sub(dx, dy, dz, degrees):
-    move_camera(-(dx * move_speed), -(dy * move_speed), (dz * move_speed))
+def move_sub(forward, right, dz, degrees):
+    move_camera(-(forward * move_speed), -(right * move_speed), (dz * move_speed))
     rotate_camera(degrees * rotate_speed)
 
 def handle_keyboard_input():
