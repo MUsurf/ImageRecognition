@@ -116,6 +116,9 @@ while True:
                 cv.line(frame,far,end,[0,255,0],2)
                 # Draw the point of the angle
                 cv.circle(frame,far,5,[0,0,255],-1)
+
+                # return ((start, far), (far, end))
+                
         # If error from opencv then skip this frame
         except cv.error:
             continue
