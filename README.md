@@ -13,6 +13,10 @@ Repository to hold code working on image recognition tasks
 - `./test_images` images for testing the scripts
   - `mask.png` is a quick example of continuous oblong
   - `maskBent.png` is a quick example of bent oblong
+- `./virtualCam` scripts for creating abstract sub control scripts
+  - `exampleMovement.py` example control script. centers sub left to right
+  - `testMovement.py` script to run, uses vCam to simulate sub and run attached control script
+  - `vCam.py` script to handle all of the creation of the virtual camera
 - `cameraCheck.py` script to ensure pygame can access camera
 - `README.md` this file
 - `requirements-conda.txt` conda environment installed with `conda create --name opencv3.12 --file requirements-conda.txt` 
