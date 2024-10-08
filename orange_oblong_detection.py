@@ -108,6 +108,8 @@ while True:
         # Actually draw the line
         cv.line(frame,(colMin1,righty),(0,lefty),(0,255,0),2)
 
+        # return ((colMin1, righty), (0, lefty))
+
     # Show the edits
     cv.imshow('Contours', frame)
     cv.imshow('Mask', mask)
