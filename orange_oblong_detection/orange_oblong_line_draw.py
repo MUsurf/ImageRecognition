@@ -15,27 +15,95 @@ if not cap.isOpened():
     print(f"Error: Camera with index {camera_index} not accessible or not found")
     exit()
 
-## Draw a line around the orange thing
 
-while True:
+#Creates a frame for the image and flips it
+def createFrame():
     # Get the frame to read. with ret being a flag to indicate success
     ret, frame = cap.read()
     if not ret:
         print("Error: Failed to capture frame")
-        break
+        raise ValueError("Error: Failed to capture frame")
+        
 
     # Flips the frame to make it more user viewable
     frame = cv.flip(frame, 1)
+    return frame
 
-    # Converts the frame to HSV color range
+#creates a mask for the frame that had previously been created by createFrame
+import cv2 as cv
+import numpy as np
+
+def createMask(frame):
+    # Converts the frame to HSV color space
     hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
-    # Creates an array of colors to "bound" orange color
-    lower_color = np.array([0, 150, 150])
-    upper_color = np.array([30, 255, 255])
+    # Define HSV range for red
+    lower_red_1 = np.array([0, 150, 150])  # Lower bound for red (lower red hue)
+    upper_red_1 = np.array([10, 255, 255])  # Upper bound for red (lower red hue)
+    
+    lower_red_2 = np.array([170, 150, 150])  # Lower bound for red (upper red hue)
+    upper_red_2 = np.array([180, 255, 255])  # Upper bound for red (upper red hue)
 
-    # Creates a "mask" for the frame that is in the color range for orange
-    mask = cv.inRange(hsv, lower_color, upper_color)
+    # Define HSV range for blue
+    lower_blue = np.array([110, 150, 150])  # Lower bound for blue
+    upper_blue = np.array([130, 255, 255])  # Upper bound for blue
+
+    # Create mask for red (two parts to capture both hue ranges of red)
+    mask_red_1 = cv.inRange(hsv, lower_red_1, upper_red_1)
+    mask_red_2 = cv.inRange(hsv, lower_red_2, upper_red_2)
+    
+    # Combine both red masks
+    mask_red = cv.add(mask_red_1, mask_red_2)
+
+    # Create mask for blue
+    mask_blue = cv.inRange(hsv, lower_blue, upper_blue)
+
+    # Combine red and blue masks
+    final_mask = cv.add(mask_red, mask_blue)
+
+    return final_mask
+
+def drawLimeGreenBox(frame, mask):
+    # Find contours in the mask
+    contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+
+    # If contours are found, draw bounding boxes around them
+    if contours:
+        for contour in contours:
+            # Get the bounding box for each contour
+            x, y, w, h = cv.boundingRect(contour)
+            
+            # Draw a lime green rectangle around the detected color
+            cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Lime green box
+
+    return frame
+
+# Example usage:
+# frame = cv.imread("image.jpg")  # Load your image/frame here
+# mask = createMask(frame)
+# frame_with_box = drawLimeGreenBox(frame, mask)
+# cv.imshow("Result", frame_with_box)
+# cv.waitKey(0)
+# cv.destroyAllWindows()
+
+
+
+
+
+
+
+## Draw a line around the orange thing
+
+while True:
+   
+   #makes a frame and flips it
+    try: 
+        frame = createFrame()
+    except ValueError as e:
+        break
+
+    #create a mask for the frame
+    mask = createMask(frame)
 
     # Creates an array of 15x15 of np.uint8 of all ones 
     kernel = np.ones((15, 15), np.uint8)
