@@ -48,6 +48,12 @@ while True:
     # this is just basically cleaning up the image
     mask_smoothed = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
 
+    #Creates a kernel that is above a pixel 
+    kernel2 = np.ones((5,5), np.float32)/25
+    #averages the existing mask, making it blurry
+    mask_smoothed = cv.filter2D(mask_smoothed, -1, kernel2)
+
+    
     # Finds all the contours.
     #  Uses the smoothed out image
     # sets the mode to retrieve only extreme outer contours 
@@ -110,6 +116,9 @@ while True:
                 cv.line(frame,far,end,[0,255,0],2)
                 # Draw the point of the angle
                 cv.circle(frame,far,5,[0,0,255],-1)
+
+                # return ((start, far), (far, end))
+                
         # If error from opencv then skip this frame
         except cv.error:
             continue
